@@ -1,25 +1,3 @@
-// import React from "react";
-// import "./SongsList.css";
-
-// function SongList({ searchResults }) {
-//   return (
-//     <div className="song-list-overlay">
-//       <div className="songs-list">
-//         <ul>
-//           {searchResults.map((song) => (
-//             <li key={song.id}>{song.title}</li>
-//           ))}
-//         </ul>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default SongList;
-
-
-
-
 import React from "react";
 import "./SongsList.css";
 
@@ -42,10 +20,3 @@ function SongList({ searchResults }) {
 
 
 export default SongList;
-
-
-
-
-
-
-
