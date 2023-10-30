@@ -1,5 +1,3 @@
-// import { backendUrl } from "./config";
-
 export const makeUnauthenticatedPOSTRequest = async (
   route,
   username,
