@@ -1,120 +1,15 @@
-// import React from 'react';
-
-// function FavoriteSongsList({ favoriteSongs }) {
-//   if (!favoriteSongs) {
-//     // Handle the case where favoriteSongs is not defined or empty
-//     return (
-//       <div>
-//         <p>No favorite songs found.</p>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div>
-//       <h2>Favorite Songs</h2>
-//       <ul>
-//         {favoriteSongs.map((song) => (
-//           <li key={song.id}>{song.title}</li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// }
-
-// export default FavoriteSongsList;
-
-
-
-
-
-// import React, { useState, useEffect } from 'react';
-
-// const FavoriteSongsList = () => {
-//     const [favorites, setFavorites] = useState([]);
-//     const [token, setToken] = useState('YOUR_JWT_TOKEN'); // Initialize with your token or get it from your authentication flow
-
-//     // Function to fetch favorites based on the token
-//     const fetchFavorites = async () => {
-//         try {
-//             const response = await fetch('https://academics.newtonschool.co/api/v1/music/album?limit=100', {
-//                 headers: {
-//                     'Authorization': `Bearer ${token}`,
-//                     'projectId': 'f104bi07c490'
-//                 }
-//             });
-
-//             if (response.ok) {
-//                 const res = await response.json();
-//                 setFavorites(res.data);
-//             } else {
-//                 console.error('Error fetching album data:', response.statusText);
-//             }
-//         } catch (error) {
-//             console.error('Error fetching album data:', error);
-//         }
-//     };
-
-//     useEffect(() => {
-//         // Fetch favorites when the component mounts
-//         fetchFavorites();
-//     }, [token]);
-
-//     const toggleFavorite = async (songId) => {
-//         try {
-//             const response = await fetch('https://academics.newtonschool.co/api/v1/music/favorites/like', {
-//                 method: 'PATCH',
-//                 headers: {
-//                     'Authorization': `Bearer ${token}`,
-//                     'projectID': 'f104bi07c490',
-//                     'Content-Type': 'application/json'
-//                 },
-//                 body: JSON.stringify({ "songId": songId })
-//             });
-
-//             if (response.ok) {
-//                 // After updating favorites, re-fetch the list to update the UI
-//                 fetchFavorites();
-//             } else {
-//                 console.error('Error toggling favorite:', response.statusText);
-//             }
-//         } catch (error) {
-//             console.error('Error toggling favorite:', error);
-//         }
-//     };
-
-//     return (
-//         <div>
-//             <h2>Liked Songs</h2>
-//             {favorites.map((song) => (
-//                 <div key={song.id}>
-//                     <p>{song.title}</p>
-//                     <button onClick={() => toggleFavorite(song.id)}>
-//                         {song.isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
-//                     </button>
-//                 </div>
-//             ))}
-//         </div>
-//     );
-// };
-
-// export default FavoriteSongsList;
-
-
 
 import React, { useState, useEffect } from 'react';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import { addSongToFavorites, removeSongFromFavorites } from './authenticate';
 
 const FavoriteSongsList = () => {
     const [favorites, setFavorites] = useState([]);
-    // const [token, setToken] = useState(''); 
-
-    // Function to fetch favorites based on the tokenconst
-    // const tkn = localStorage.getItem("token");
-    // setToken(tkn);
+    const [likedSongs, setLikedSongs] = useState([]);
+    const [isFavourite, setIsFavourite] = useState(false);
 
     useEffect(() => {
-      // Define the function to fetch favorites based on the token
-      
       const fetchFavorites = async () => {
         const token = localStorage.getItem("token");
           try {
@@ -129,7 +24,7 @@ const FavoriteSongsList = () => {
               if (response.ok) {
                   const data = await response.json();
                   console.log( "data", data);
-                  setFavorites(data.data); // Assuming the response is an array of favorite songs
+                  setFavorites(data.data);
               } else {
                   console.error('Failed to fetch favorites');
               }
@@ -138,37 +33,50 @@ const FavoriteSongsList = () => {
           }
       };
 
-      // Call the fetchFavorites function when the component mounts
       fetchFavorites();
   }, []);
 
-    const toggleFavorite = async (songId) => {
+    const handleLikeToggle = async (songId) => {
+        try {
+            if (likedSongs.includes(songId)) {
+                await removeSongFromFavorites("/music/favorites/like", songId);
+                setIsFavourite(false);
+            } else {
+                await addSongToFavorites("/music/favorites/like", songId);
+                setIsFavourite(true);
+            }
 
+            setLikedSongs((prevLikedSongs) =>
+                prevLikedSongs.includes(songId)
+                    ? prevLikedSongs.filter((id) => id !== songId)
+                    : [...prevLikedSongs, songId]
+            );
+        } catch (error) {
+            console.error("Error toggling like:", error);
+        }
     };
+
 console.log( "favi",favorites);
     return (
-        <div>
+        <div style={{ marginTop: '4rem' }}>
             <h2>Liked Songs</h2>
-            {favorites?.songs?.map((song) => (
-
-                <div key={song.id}>
-                    <p>{song.title}</p>
-                    <button onClick={() => toggleFavorite(song.id)}>
-                        {song.isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
-                    </button>
-                </div>
-            ))}
+            <table>
+                <tbody>
+                    {favorites?.songs?.map((song, index) => (
+                        <tr key={song.id}>
+                            <td>
+                                <img src={song.thumbnail} alt={song.title} style={{ width: '40px', height: '40px', marginRight: '10px' }} />
+                                <button onClick={() => handleLikeToggle(song.id)}>
+                                    {isFavourite ? <FavoriteIcon /> : <FavoriteBorderIcon />} {/* Use Material-UI icons here */}
+                                </button>
+                                {song.title}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 };
 
 export default FavoriteSongsList;
-
-
-
-
-
-
-
-
-
