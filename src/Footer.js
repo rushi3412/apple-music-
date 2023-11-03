@@ -6,11 +6,11 @@ const Footer = () => {
       <p>United States | Español | Some other language</p>
       <p>© 2023 Apple Inc. All rights reserved</p>
       <p>
-        <a href="#">Internet Service Terms</a> | 
-        <a href="#">Apple Music & Privacy</a> | 
-        <a href="#">Cookie Warning</a> | 
-        <a href="#">Support</a> | 
-        <a href="#">Feedback</a>
+        <a >Internet Service Terms</a> | 
+        <a >Apple Music & Privacy</a> | 
+        <a >Cookie Warning</a> | 
+        <a >Support</a> | 
+        <a >Feedback</a>
       </p>
     </footer>
   );
