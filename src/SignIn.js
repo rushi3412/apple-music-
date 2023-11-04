@@ -116,7 +116,7 @@ const SignIn = () => {
                         ></path>  
                       </svg>
                       </div>
-          <h1 style={{ marginBottom: '20px' }}>Sign In or Sign Up</h1>
+          <h1 style={{ marginBottom: '20px' }}>Sign In or <Link to="/signUp">Sign Up</Link></h1>
           <h2 style={{ marginBottom: '20px' }}>Enter your email to get started.</h2>
           <label style={{ marginBottom: '20px' }}>
             <input type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email or Apple ID"
