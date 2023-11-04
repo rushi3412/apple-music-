@@ -14,6 +14,7 @@ import FavoriteSongsList from './FavoriteSongsList';
 import ComingSoon from './ComingSoon';
 import ChangePassword from './ChangePassword';
 import Signup from "./Signup.js";
+import LogOut from "./LogOut.js";
 import RandomAlbumGrid from './RandomAlbumGrid'; // Import the RandomAlbumGrid component
 
 export default function App() {
@@ -37,6 +38,7 @@ export default function App() {
             <Route path="/favorites" element={<FavoriteSongsList />} />
             <Route path="/change-password" element={<ChangePassword />} />
               <Route path="/signUp" element={<Signup />} />
+               <Route path="/LogOut" element={<LogOut />} />
             <Route path="/coming-soon" element={<ComingSoon />} />
           </Routes>
           {/* <Footer />  */}
