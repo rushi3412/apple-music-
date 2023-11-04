@@ -13,6 +13,7 @@ import FavoriteSongsList from './FavoriteSongsList';
 // import Footer from './Footer'; 
 import ComingSoon from './ComingSoon';
 import ChangePassword from './ChangePassword';
+import Signup from "./Signup.js";
 import RandomAlbumGrid from './RandomAlbumGrid'; // Import the RandomAlbumGrid component
 
 export default function App() {
@@ -35,6 +36,7 @@ export default function App() {
             {/* Add a new route for AlbumFetcher with a section number */}
             <Route path="/favorites" element={<FavoriteSongsList />} />
             <Route path="/change-password" element={<ChangePassword />} />
+              <Route path="/signUp" element={<Signup />} />
             <Route path="/coming-soon" element={<ComingSoon />} />
           </Routes>
           {/* <Footer />  */}
