@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { IconButton, Typography, Card, CardContent, CardMedia } from '@mui/material';
-import { PlayArrow, Pause, SkipPrevious,  SkipNext, Repeat, Shuffle } from '@mui/icons-material';
+import { IconButton, Typography, Card, CardContent, CardMedia, } from '@mui/material';
+import { PlayArrow, Pause, SkipPrevious, SkipNext } from '@mui/icons-material';
 import { useMusicPlayer } from './MusicPlayerContext';
 
 const cardStyle = {
@@ -14,43 +14,72 @@ const cardStyle = {
 };
 
 const mediaStyle = {
-  width: '450px', // Adjust the width as needed
-  height: '400px', // Adjust the height as needed
+  width: '450px',
+  height: '400px',
   borderRadius: '5px',
 };
 
 const iconStyle = {
-  fontSize: '36px', // Adjust the icon size as needed
-  color: 'white', // Change the icon color to white
+  fontSize: '36px',
+  color: 'white',
 };
 
 const textStyle = {
-  fontSize: '24px', // Adjust the font size as needed
-  color: 'white',  // Change the text color to white
+  fontSize: '24px',
+  color: 'white',
 };
 
-
-
 function MusicPlayerPage() {
-  const { currentSong, songs, indexSong, setIndexSong, isPlaying, setIsPlaying } = useMusicPlayer();
-  // const [isPlaying, setIsPlaying] = useState(false);
-  const [isLooping, setIsLooping] = useState(false);
-  const [isShuffling, setIsShuffling] = useState(false);
+  const { currentSong, isPlaying, playlist, playNextSong, playPreviousSong, togglePlayPause, playSong } = useMusicPlayer();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [ setPlaylist] = useState([]);
 
+  const audioRef = useRef(new Audio());
 
-  const audioRef = useRef(new Audio(currentSong[indexSong] ? currentSong[indexSong].audio_url : null));
+  useEffect(() => {
+    // Make the API request here to fetch the playlist data
+    fetch('https://academics.newtonschool.co/api/v1/music/song', {
+      headers: {
+        'projectId': 'f104bi07c490',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Assuming the API response has a 'data' field containing the songs
+        if (data.status === 'success' && data.data && data.data.length > 0) {
+          setPlaylist(data.data);
+          // You might want to select and play the first song from the playlist
+          playSong(data.data[0], data.data);
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
+  }, [playSong]);
 
-  // Use this effect to handle changes in the current song
+  useEffect(() => {
+    if (playlist.length > 0) {
+      // Set the current song index to the first song in the playlist
+      setCurrentIndex(0);
+
+      // Play the first song
+      playSong(playlist[0], playlist);
+    }
+  }, [playlist]);
+  
   useEffect(() => {
     if (currentSong) {
       audioRef.current.src = currentSong.audio_url;
-      if (isPlaying) {
-        audioRef.current.play();
-      }
+      audioRef.current.oncanplaythrough = () => {
+        if (isPlaying) {
+          audioRef.current.play();
+        }
+      };
     } else {
       audioRef.current.pause();
     }
   }, [currentSong, isPlaying]);
+  
 
   const handlePlayPause = () => {
     if (currentSong) {
@@ -59,45 +88,31 @@ function MusicPlayerPage() {
       } else {
         audioRef.current.play();
       }
-      setIsPlaying(!isPlaying);
+      togglePlayPause();
+    }
+  };
+
+  
+
+  const handleNext = () => {
+    if (playlist.length > 0) {
+      // Calculate the index for the next song
+      const nextIndex = (currentIndex + 1) % playlist.length;
+      setCurrentIndex(nextIndex);
+      playSong(playlist[nextIndex], playlist);
     }
   };
 
   const handlePrev = () => {
-    let currentIndex = songs.findIndex(song => song.id === currentSong.id);
-    if (currentIndex > 0) {
-      setCurrentSong(songs[currentIndex - 1]);
-    } else if (isShuffling) {
-      let randomIndex = Math.floor(Math.random() * songs.length);
-      setCurrentSong(songs[randomIndex]);
-    }
-  };
-
-  const handleNext = () => {
-    let currentIndex = songs.findIndex(song => song.id === currentSong.id);
-    if (currentIndex < songs.length - 1) {
-      setCurrentSong(songs[currentIndex + 1]);
-    } else if (isShuffling) {
-      let randomIndex = Math.floor(Math.random() * songs.length);
-      setCurrentSong(songs[randomIndex]);
-    }
-  };
-
-  const handleLoop = () => {
-    setIsLooping(!isLooping);
-    audioRef.current.loop = isLooping; // This will enable or disable looping
-  };
-
-  const handleShuffle = () => {
-    setIsShuffling(!isShuffling);
-    if (isShuffling) {
-      let randomIndex = Math.floor(Math.random() * songs.length);
-      setCurrentSong(songs[randomIndex]);
+    if (playlist.length > 0) {
+      // Calculate the index for the previous song
+      const prevIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+      setCurrentIndex(prevIndex);
+      playSong(playlist[prevIndex], playlist);
     }
   };
 
   return (
-    
     <Card className="music-player" style={cardStyle}>
       <CardMedia
         component="img"
@@ -107,25 +122,18 @@ function MusicPlayerPage() {
       />
       <CardContent>
         <Typography variant="h6" gutterBottom style={textStyle}>
-          {currentSong ? `${currentSong.title} - ${currentSong.artists ? currentSong.artists.map(artist => artist.name).join(', ') : 'Unknown Artist'}` : 'No song selected'}
+          {currentSong
+            ? `${currentSong.title}`
+            : 'No song selected'}
         </Typography>
-        <Typography variant="body2" color="textSecondary" style={textStyle}>
-          Mood: {currentSong ? currentSong.mood : 'N/A'}
-        </Typography>
-        <IconButton onClick={handlePrev} style={iconStyle}>
+        <IconButton onClick={playPreviousSong} style={iconStyle}>
           <SkipPrevious />
         </IconButton>
         <IconButton onClick={handlePlayPause} style={iconStyle}>
           {isPlaying ? <Pause /> : <PlayArrow />}
         </IconButton>
-        <IconButton onClick={handleNext} style={iconStyle}>
-           <SkipNext />
-      </IconButton>
-        <IconButton onClick={handleLoop} style={iconStyle}>
-          <Repeat color={isLooping ? 'primary' : 'inherit'} />
-        </IconButton>
-        <IconButton onClick={handleShuffle} style={iconStyle}>
-          <Shuffle color={isShuffling ? 'primary' : 'inherit'} />
+        <IconButton onClick={playNextSong} style={iconStyle}>
+          <SkipNext />
         </IconButton>
       </CardContent>
     </Card>
