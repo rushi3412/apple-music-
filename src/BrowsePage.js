@@ -4,26 +4,32 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause'; // Import PauseIcon
 import { Card, CardContent, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import CircularProgress from "@mui/material/CircularProgress";
 import RandomAlbumGrid from './RandomAlbumGrid';
 
 function BrowsePage() {
   const [albums, setAlbums] = useState([]);
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
   const [expandedSections, setExpandedSections] = useState({});
   const [isPlaying, setIsPlaying] = useState(false); // Add isPlaying state
 
   useEffect(() => {
-    fetch('https://academics.newtonschool.co/api/v1/music/album?limit=300', {
+    fetch("https://academics.newtonschool.co/api/v1/music/album?limit=300", {
       headers: {
-        'projectId': 'f104bi07c490'
-      }
+        projectId: "f104bi07c490",
+      },
     })
-      .then(response => response.json())
-      .then(res => {
-        console.log('API Data:', res);
+      .then((response) => response.json())
+      .then((res) => {
+        console.log("API Data:", res);
         setAlbums(res.data);
+        setIsLoading(false); // Set isLoading to false when data is fetched
       })
-      .catch(error => console.error('Error fetching album data:', error));
+      .catch((error) => {
+        console.error("Error fetching album data:", error);
+        setIsLoading(false); // Set isLoading to false in case of an error
+      });
   }, []);
 
   useEffect(() => {
@@ -45,7 +51,7 @@ function BrowsePage() {
       index === 4 || index === 5 || index === 6 ||
       index === 7 || index === 8 || index === 9 ||
       index === 10 || index === 11) {
-      
+      // If "Playlist on the Pulse" is clicked, navigate to the "/random-albums" route
       navigate('/random-albums');
     } else {
       setExpandedSections(prevState => ({
@@ -144,11 +150,14 @@ function BrowsePage() {
   return (
     <div className='screen-container' >
       <h1 style={{ fontSize: '30px', fontFamily: 'Arial, sans-serif', borderBottom: '1px solid white' }}>Browse</h1>
-      {albums && albums.length > 0 && (
-        <div>
-          {renderAlbumSections()}
+      {isLoading ? (
+        <div className="loading-container">
+          <CircularProgress />
+          <p>Loading...</p>
         </div>
-      )}
+      ) : (
+        albums && albums.length > 0 && <div>{renderAlbumSections()}</div>
+        )}
     </div>
   );
 }
