@@ -1,8 +1,9 @@
-import React, { useState }  from "react";
+import React, { useState, useEffect }  from "react";
 import { Link, useNavigate, } from 'react-router-dom';
 import { IconButton, Typography, Card, CardContent, CardMedia } from '@mui/material';
 import { useMusicPlayer } from './MusicPlayerContext';
 import './Navbar.css'
+import LogOut from "./LogOut";
 import { PlayArrow, Pause, SkipPrevious, SkipNext, Repeat, Shuffle } from '@mui/icons-material';
 
 function Navbar() {
@@ -11,14 +12,15 @@ function Navbar() {
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isLooping, setIsLooping] = useState(false); // Define isLooping state
   const [isShuffling, setIsShuffling] = useState(false);
+  
   // const navigate = useNavigate();
+
 
   // This function handles clicking on the song icon.
   const handleSongIconClick = (album, songIndex) => {
     setCurrentSongIndex(songIndex);
     setIsPlaying(true);
   };
-  
 
 const songs = [
   "Song 1",
@@ -96,7 +98,7 @@ const handleForward = () => {
                 <div class="lcd__badge-platter">PREVIEW</div>
               </>
             ) : (
-              <div>No song selected</div>
+              <div></div>
             )}
           {/* </div>          */}
             <div className="appleicon">
@@ -106,9 +108,10 @@ const handleForward = () => {
                     height="24"
                     version="1.1"
                     viewBox="0 0 20 24"
+                    style={{ fill: 'white' }}
                   >
                     <path
-                    fill="black"
+                    fill="white"
                       fill-rule="nonzero"
                       stroke="none"
                       stroke-width="1"
@@ -122,13 +125,12 @@ const handleForward = () => {
             <div className="volumediv">
             </div>
             <div className="signdiv">
-              <Link to="/LogOut">
+            <Link to="/LogOut">
               <p>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="18"
                 height="18"
-              
                 viewBox="0 0 18 18">
                 <path d="M2.634 5.537a.906.906 0 1 0 0-1.813.906.906 0 1 0 0 1.813zm3.192-.325h9.865a.576.576 0 0 0 .585-.578.578.578 0 0 0-.585-.585H5.826a.574.574 0 0 0-.585.585c0 .325.253.578.585.578zM2.634 9.906c.506 0 .91-.404.91-.91a.906.906 0 0 0-.91-.91.906.906 0 0 0-.91.91c0 .506.405.91.91.91zm3.192-.325h9.865a.582.582 0 1 0 0-1.162H5.826a.572.572 0 0 0-.585.577c0 .325.253.585.585.585zm-3.192 4.694a.91.91 0 1 0-.001-1.82.91.91 0 0 0 0 1.82zm3.192-.332h9.865a.576.576 0 0 0 .585-.577.578.578 0 0 0-.585-.585H5.826a.574.574 0 0 0-.585.585c0 .324.253.577.585.577z"></path>
               </svg>
