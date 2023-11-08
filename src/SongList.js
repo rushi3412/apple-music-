@@ -10,6 +10,7 @@ import { addSongToFavorites, removeSongFromFavorites } from './authenticate';
 function SongList() {
   const { state } = useLocation();
   const album = state && state.album;
+  const { playSong } = useMusicPlayer();
   const { setCurrentSong } = useMusicPlayer();
   const [isPlaying, setIsPlaying] = useState(Array(album.songs.length).fill(false));
   const [artistNames, setArtistNames] = useState({});
@@ -20,7 +21,20 @@ function SongList() {
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
  
-
+  const playSongFromAlbum = (song) => {
+    // Get the index of the current song in the album
+    const songIndex = album.songs.findIndex((s) => s === song);
+  
+    // Create a new array of songs starting from the current song
+    const songsToPlay = [...album.songs.slice(songIndex), ...album.songs.slice(0, songIndex)];
+  
+    // Log the new array of songs
+    console.log('Songs to play:', songsToPlay);
+  
+    // Pass the new array of songs to the playSong function
+    playSong(song, songsToPlay);
+  };
+  
 
   // Function to toggle play/pause for a song
   const togglePlay = (index) => {
@@ -152,7 +166,7 @@ console.log("songlis " , favoriteSongs)
           />
           <IconButton
             className="play-pause-button"
-            onClick={() => togglePlay(index)}
+            onClick={() => playSongFromAlbum(song)}
             style={{
               position: 'absolute',
               top: '50%',
