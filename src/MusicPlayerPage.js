@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { IconButton, Typography, Card, CardContent, CardMedia, } from '@mui/material';
+import {
+  IconButton,
+  Typography,
+  Card,
+  CardContent,
+  CardMedia,
+} from '@mui/material';
 import { PlayArrow, Pause, SkipPrevious, SkipNext } from '@mui/icons-material';
 import { useMusicPlayer } from './MusicPlayerContext';
 
