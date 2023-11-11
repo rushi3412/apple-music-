@@ -67,7 +67,7 @@
   height: 100vh;
   width: 100vw;
 }
-
+/* 
 :root {
   --systemRed: #ff3b30;
   --systemRed-vibrant: #f53126;
@@ -292,7 +292,7 @@
   --librarySongsTrackInactiveBG: rgba(0, 0, 0, 0.14);
   --profileBadgeBG: #e2e4e7;
   color-scheme: light dark;
-}
+} */
 
 .sidebarparent {
   background-color: rgba(60, 60, 67, 0.03);
